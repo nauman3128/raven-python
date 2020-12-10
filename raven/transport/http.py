@@ -34,11 +34,11 @@ class HTTPTransport(Transport):
         self.verify_ssl = verify_ssl
         self.ca_certs = ca_certs
 
-    def send(self, data, headers):
+    def send(self, url, data, headers):
         """
         Sends a request to a remote webserver using HTTP POST.
         """
-        req = urllib.request.Request(self._url, headers=headers)
+        req = urllib2.Request(url, headers=headers)
 
         try:
             response = urlopen(
@@ -48,7 +48,7 @@ class HTTPTransport(Transport):
                 verify_ssl=self.verify_ssl,
                 ca_certs=self.ca_certs,
             )
-        except urllib.error.HTTPError as exc:
+        except urllib2.HTTPError as exc:
             msg = exc.headers.get('x-sentry-error')
             code = exc.getcode()
             if code == 429:
