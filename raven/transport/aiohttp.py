@@ -72,4 +72,5 @@ class AioHttpTransport(AsyncTransport, HTTPTransport):
             except Exception as exc:
                 failure_cb(exc)
 
-        asyncio.async(f(), loop=self._loop)
+        # asyncio.async(f(), loop=self._loop)
+        getattr(asyncio, 'async')(f(), loop=self._loop)
