@@ -1,36 +1,24 @@
 """
 raven
 ~~~~~
-
 :copyright: (c) 2010-2012 by the Sentry Team, see AUTHORS for more details.
 :license: BSD, see LICENSE for more details.
 """
-
+from __future__ import absolute_import
 
 import os
 import os.path
-from raven.base import *  # NOQA
-from raven.conf import *  # NOQA
 
+__all__ = ('VERSION', 'Client', 'get_version')  # noqa
 
-__all__ = ('VERSION', 'Client', 'load', 'get_version')
-
-try:
-    VERSION = __import__('pkg_resources') \
-        .get_distribution('raven').version
-except Exception as e:
-    VERSION = 'unknown'
+VERSION = '6.10.0'
 
 
 def _get_git_revision(path):
     revision_file = os.path.join(path, 'refs', 'heads', 'master')
-    if not os.path.exists(revision_file):
-        return None
-    fh = open(revision_file, 'r')
-    try:
-        return fh.read().strip()[:7]
-    finally:
-        fh.close()
+    if os.path.exists(revision_file):
+        with open(revision_file) as fh:
+            return fh.read().strip()[:7]
 
 
 def get_revision():
@@ -43,7 +31,6 @@ def get_revision():
     path = os.path.join(checkout_dir, '.git')
     if os.path.exists(path):
         return _get_git_revision(path)
-    return None
 
 
 def get_version():
@@ -52,5 +39,12 @@ def get_version():
         base = '%s (%s)' % (base, __build__)
     return base
 
+
 __build__ = get_revision()
 __docformat__ = 'restructuredtext en'
+
+
+# Declare child imports last to prevent recursion
+from raven.base import *  # NOQA
+from raven.conf import *  # NOQA
+from raven.versioning import *  # NOQA
