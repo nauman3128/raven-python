@@ -6,7 +6,7 @@ raven.utils.compat
 :license: BSD, see LICENSE for more details.
 """
 
-
+import urllib
 
 try:
     from urllib.error import HTTPError
