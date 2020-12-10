@@ -15,7 +15,7 @@ except ImportError:
 
 
 try:
-    import http.client  # NOQA
+    import http.client as httplib  # NOQA
 except ImportError:
     from http import client as httplib  # NOQA
 
