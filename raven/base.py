@@ -1,6 +1,7 @@
 """
 raven.base
 ~~~~~~~~~~
+
 :copyright: (c) 2010-2012 by the Sentry Team, see AUTHORS for more details.
 :license: BSD, see LICENSE for more details.
 """
@@ -121,13 +122,18 @@ class ClientState(object):
 class Client(object):
     """
     The base Raven client.
+
     Will read default configuration from the environment variable
     ``SENTRY_DSN`` if available.
+
     >>> from raven import Client
+
     >>> # Read configuration from ``os.environ['SENTRY_DSN']``
     >>> client = Client()
+
     >>> # Specify a DSN explicitly
     >>> client = Client(dsn='https://public_key:secret_key@sentry.local/project_id')
+
     >>> # Record an exception
     >>> try:
     >>>     1/0
@@ -309,6 +315,7 @@ class Client(object):
     def get_ident(self, result):
         """
         Returns a searchable string representing a message.
+
         >>> result = client.capture(**kwargs)
         >>> ident = client.get_ident(result)
         """
@@ -323,8 +330,10 @@ class Client(object):
     def get_public_dsn(self, scheme=None):
         """
         Returns a public DSN which is consumable by raven-js
+
         >>> # Return scheme-less DSN
         >>> print client.get_public_dsn()
+
         >>> # Specify a scheme to use (http or https)
         >>> print client.get_public_dsn('https')
         """
@@ -365,6 +374,7 @@ class Client(object):
                   tags=None, fingerprint=None, **kwargs):
         """
         Captures, processes and serializes an event into a dict object
+
         The result of ``build_msg`` should be a standardized dict, with
         all default values available.
         """
@@ -513,6 +523,7 @@ class Client(object):
     def context(self):
         """
         Updates this clients thread-local context for future events.
+
         >>> def view_handler(view_func, *args, **kwargs):
         >>>     client.context.merge(tags={'key': 'value'})
         >>>     try:
@@ -525,6 +536,7 @@ class Client(object):
     def user_context(self, data):
         """
         Update the user context for future events.
+
         >>> client.user_context({'email': 'foo@example.com'})
         """
         return self.context.merge({
@@ -534,6 +546,7 @@ class Client(object):
     def http_context(self, data, **kwargs):
         """
         Update the http context for future events.
+
         >>> client.http_context({'url': 'http://example.com'})
         """
         return self.context.merge({
@@ -543,6 +556,7 @@ class Client(object):
     def extra_context(self, data, **kwargs):
         """
         Update the extra context for future events.
+
         >>> client.extra_context({'foo': 'bar'})
         """
         return self.context.merge({
@@ -552,7 +566,9 @@ class Client(object):
     def tags_context(self, data, **kwargs):
         """
         Update the tags context for future events.
+
         >>> client.tags_context({'version': '1.0'})
+
         """
         return self.context.merge({
             'tags': data,
@@ -563,7 +579,9 @@ class Client(object):
                 **kwargs):
         """
         Captures and processes an event and pipes it off to SentryClient.send.
+
         To use structured data (interfaces) with capture:
+
         >>> capture('raven.events.Message', message='foo', data={
         >>>     'request': {
         >>>         'url': '...',
@@ -575,8 +593,10 @@ class Client(object):
         >>> }, extra={
         >>>     'key': 'value',
         >>> })
+
         The finalized ``data`` structure contains the following (some optional)
         builtin values:
+
         >>> {
         >>>     # the culprit and version information
         >>>     'culprit': 'full.module.name', # or /arbitrary/path
@@ -591,6 +611,7 @@ class Client(object):
         >>>         'key': 'value',
         >>>     }
         >>> }
+
         :param event_type: the module path to the Event class. Builtins can use
                            shorthand class notation and exclude the full module
                            path.
@@ -777,6 +798,7 @@ class Client(object):
     def captureMessage(self, message, **kwargs):
         """
         Creates an event from ``message``.
+
         >>> client.captureMessage('My event just happened!')
         """
         return self.capture('raven.events.Message', message=message, **kwargs)
@@ -784,14 +806,17 @@ class Client(object):
     def captureException(self, exc_info=None, **kwargs):
         """
         Creates an event from an exception.
+
         >>> try:
         >>>     exc_info = sys.exc_info()
         >>>     client.captureException(exc_info)
         >>> finally:
         >>>     del exc_info
+
         If exc_info is not provided, or is set to True, then this method will
         perform the ``exc_info = sys.exc_info()`` and the requisite clean-up
         for you.
+
         ``kwargs`` are passed through to ``.capture``.
         """
         if exc_info is None or exc_info is True:
@@ -821,18 +846,25 @@ class Client(object):
         Wrap a function or code block in try/except and automatically call
         ``.captureException`` if it raises an exception, then the exception
         is reraised.
+
         By default, it will capture ``Exception``
+
         >>> @client.capture_exceptions
         >>> def foo():
         >>>     raise Exception()
+
         >>> with client.capture_exceptions():
         >>>    raise Exception()
+
         You can also specify exceptions to be caught specifically
+
         >>> @client.capture_exceptions((IOError, LookupError))
         >>> def bar():
         >>>     ...
+
         >>> with client.capture_exceptions((IOError, LookupError)):
         >>>    ...
+
         ``kwargs`` are passed through to ``.captureException``.
         """
         function = None
@@ -860,6 +892,7 @@ class Client(object):
     def captureQuery(self, query, params=(), engine=None, **kwargs):
         """
         Creates an event for a SQL query.
+
         >>> client.captureQuery('SELECT * FROM foo')
         """
         return self.capture(
