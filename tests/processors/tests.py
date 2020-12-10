@@ -96,11 +96,11 @@ class SanitizeKeysProcessorTest(TestCase):
         Helper to check that keys have been sanitized.
         """
         self.assertTrue('custom_key1' in vars)
-        self.assertEquals(vars['custom_key1'], MASK)
+        self.assertEqual(vars['custom_key1'], MASK)
         self.assertTrue('custom_key2' in vars)
-        self.assertEquals(vars['custom_key2'], MASK)
+        self.assertEqual(vars['custom_key2'], MASK)
         self.assertTrue('custom_key3' in vars)
-        self.assertEquals(vars['custom_key3'], MASK)
+        self.assertEqual(vars['custom_key3'], MASK)
 
     def test_stacktrace(self, *args, **kwargs):
         data = get_stack_trace_data_real()
@@ -112,7 +112,7 @@ class SanitizeKeysProcessorTest(TestCase):
         values = exception['values']
         stack = values[-1]['stacktrace']
         self.assertTrue('frames' in stack)
-        self.assertEquals(len(stack['frames']), 2)
+        self.assertEqual(len(stack['frames']), 2)
         frame = stack['frames'][1]  # frame of will_throw_type_error()
         self.assertTrue('vars' in frame)
         self._check_vars_sanitized(frame['vars'], self.proc.MASK)
@@ -142,7 +142,7 @@ class SanitizeKeysProcessorTest(TestCase):
 
         self.assertTrue('request' in result)
         http = result['request']
-        self.assertEquals(
+        self.assertEqual(
             http['query_string'],
             "foo=bar&custom_key1=%(m)s&custom_key2=%(m)s&custom_key3=%(m)s" % {'m': self.proc.MASK}
         )
@@ -154,7 +154,7 @@ class SanitizeKeysProcessorTest(TestCase):
 
         self.assertTrue('request' in result)
         http = result['request']
-        self.assertEquals(
+        self.assertEqual(
             http['query_string'],
             'foo=bar&custom_key1&baz=bar' % {'m': self.proc.MASK}
         )
@@ -168,7 +168,7 @@ class SanitizeKeysProcessorTest(TestCase):
 
         self.assertTrue('request' in result)
         http = result['request']
-        self.assertEquals(
+        self.assertEqual(
             http['cookies'],
             'foo=bar;custom_key1=%(m)s;custom_key2=%(m)s;' % {'m': self.proc.MASK})
 
@@ -179,7 +179,7 @@ class SanitizeKeysProcessorTest(TestCase):
 
         self.assertTrue('request' in result)
         http = result['request']
-        self.assertEquals(
+        self.assertEqual(
             http['cookies'],
             'foo=bar;custom_key1;baz=bar' % dict(m=self.proc.MASK)
         )
@@ -191,13 +191,13 @@ class SanitizeKeysProcessorTest(TestCase):
 
         self.assertTrue('request' in result)
         http = result['request']
-        self.assertEquals(
+        self.assertEqual(
             http['headers']['Cookie'],
             'foo=bar;custom_key1=%(m)s;custom_key2=%(m)s;' % {'m': self.proc.MASK})
 
     def test_sanitize_non_ascii(self):
         result = self.proc.sanitize('__repr__: жили-были', '42')
-        self.assertEquals(result, '42')
+        self.assertEqual(result, '42')
 
 
 class SanitizePasswordsProcessorTest(TestCase):
@@ -229,17 +229,17 @@ class SanitizePasswordsProcessorTest(TestCase):
             else:
                 self.assertEqual(vars_dict['"password"'], proc.MASK)
         self.assertTrue('password' in vars)
-        self.assertEquals(vars['password'], proc.MASK)
+        self.assertEqual(vars['password'], proc.MASK)
         self.assertTrue('the_secret' in vars)
-        self.assertEquals(vars['the_secret'], proc.MASK)
+        self.assertEqual(vars['the_secret'], proc.MASK)
         self.assertTrue('a_password_here' in vars)
-        self.assertEquals(vars['a_password_here'], proc.MASK)
+        self.assertEqual(vars['a_password_here'], proc.MASK)
         self.assertTrue('api_key' in vars)
-        self.assertEquals(vars['api_key'], proc.MASK)
+        self.assertEqual(vars['api_key'], proc.MASK)
         self.assertTrue('apiKey' in vars)
-        self.assertEquals(vars['apiKey'], proc.MASK)
+        self.assertEqual(vars['apiKey'], proc.MASK)
         self.assertTrue('access_token' in vars)
-        self.assertEquals(vars['access_token'], proc.MASK)
+        self.assertEqual(vars['access_token'], proc.MASK)
 
     def test_stacktrace(self, *args, **kwargs):
         """
@@ -258,7 +258,7 @@ class SanitizePasswordsProcessorTest(TestCase):
         stack = values[-1]['stacktrace']
         self.assertTrue('frames' in stack)
 
-        self.assertEquals(len(stack['frames']), 2)
+        self.assertEqual(len(stack['frames']), 2)
         frame = stack['frames'][1]  # frame of will_throw_type_error()
         self.assertTrue('vars' in frame)
         self._check_vars_sanitized(frame['vars'], proc)
@@ -297,7 +297,7 @@ class SanitizePasswordsProcessorTest(TestCase):
 
         self.assertTrue('request' in result)
         http = result['request']
-        self.assertEquals(
+        self.assertEqual(
             http['query_string'],
             'foo=bar&password=%(m)s&the_secret=%(m)s'
             '&a_password_here=%(m)s&api_key=%(m)s' % dict(m=proc.MASK))
@@ -311,7 +311,7 @@ class SanitizePasswordsProcessorTest(TestCase):
 
         self.assertTrue('request' in result)
         http = result['request']
-        self.assertEquals(http['query_string'], 'foo=bar&password&baz=bar' % dict(m=proc.MASK))
+        self.assertEqual(http['query_string'], 'foo=bar&password&baz=bar' % dict(m=proc.MASK))
 
     def test_cookie_as_string(self):
         data = get_http_data()
@@ -323,7 +323,7 @@ class SanitizePasswordsProcessorTest(TestCase):
 
         self.assertTrue('request' in result)
         http = result['request']
-        self.assertEquals(
+        self.assertEqual(
             http['cookies'],
             'foo=bar;password=%(m)s;the_secret=%(m)s'
             ';a_password_here=%(m)s;api_key=%(m)s' % dict(m=proc.MASK))
@@ -337,7 +337,7 @@ class SanitizePasswordsProcessorTest(TestCase):
 
         self.assertTrue('request' in result)
         http = result['request']
-        self.assertEquals(http['cookies'], 'foo=bar;password;baz=bar' % dict(m=proc.MASK))
+        self.assertEqual(http['cookies'], 'foo=bar;password;baz=bar' % dict(m=proc.MASK))
 
     def test_cookie_header(self):
         data = get_http_data()
@@ -350,7 +350,7 @@ class SanitizePasswordsProcessorTest(TestCase):
 
         self.assertTrue('request' in result)
         http = result['request']
-        self.assertEquals(
+        self.assertEqual(
             http['headers']['Cookie'],
             'foo=bar;password=%(m)s'
             ';the_secret=%(m)s;a_password_here=%(m)s;api_key=%(m)s'
@@ -359,18 +359,18 @@ class SanitizePasswordsProcessorTest(TestCase):
     def test_sanitize_credit_card(self):
         proc = SanitizePasswordsProcessor(Mock())
         result = proc.sanitize('foo', '4242424242424242')
-        self.assertEquals(result, proc.MASK)
+        self.assertEqual(result, proc.MASK)
 
     def test_sanitize_credit_card_amex(self):
         # AMEX numbers are 15 digits, not 16
         proc = SanitizePasswordsProcessor(Mock())
         result = proc.sanitize('foo', '424242424242424')
-        self.assertEquals(result, proc.MASK)
+        self.assertEqual(result, proc.MASK)
 
     def test_sanitize_non_ascii(self):
         proc = SanitizePasswordsProcessor(Mock())
         result = proc.sanitize('__repr__: жили-были', '42')
-        self.assertEquals(result, '42')
+        self.assertEqual(result, '42')
 
     def test_sanitize_bytes(self):
         proc = SanitizePasswordsProcessor(Mock())

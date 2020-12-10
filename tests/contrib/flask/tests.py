@@ -32,7 +32,7 @@ def create_app(ignore_exceptions=None, debug=False, **config):
 
     app = Flask(__name__)
     app.config['SECRET_KEY'] = os.urandom(40)
-    for key, value in config.items():
+    for key, value in list(config.items()):
         app.config[key] = value
 
     app.debug = debug
@@ -110,21 +110,21 @@ class BaseTest(TestCase):
 class FlaskTest(BaseTest):
     def test_does_add_to_extensions(self):
         self.assertIn('sentry', self.app.extensions)
-        self.assertEquals(self.app.extensions['sentry'], self.middleware)
+        self.assertEqual(self.app.extensions['sentry'], self.middleware)
 
     def test_error_handler(self):
         response = self.client.get('/an-error/')
-        self.assertEquals(response.status_code, 500)
-        self.assertEquals(len(self.raven.events), 1)
+        self.assertEqual(response.status_code, 500)
+        self.assertEqual(len(self.raven.events), 1)
 
         event = self.raven.events.pop(0)
 
         assert 'exception' in event
         exc = event['exception']['values'][-1]
-        self.assertEquals(exc['type'], 'ValueError')
-        self.assertEquals(exc['value'], 'hello world')
-        self.assertEquals(event['level'], logging.ERROR)
-        self.assertEquals(event['message'], 'ValueError: hello world')
+        self.assertEqual(exc['type'], 'ValueError')
+        self.assertEqual(exc['value'], 'hello world')
+        self.assertEqual(event['level'], logging.ERROR)
+        self.assertEqual(event['message'], 'ValueError: hello world')
 
     def test_capture_plus_logging(self):
         client, raven, app = self.make_client_and_raven(debug=False, logging=True)
@@ -135,61 +135,61 @@ class FlaskTest(BaseTest):
 
     def test_get(self):
         response = self.client.get('/an-error/?foo=bar')
-        self.assertEquals(response.status_code, 500)
-        self.assertEquals(len(self.raven.events), 1)
+        self.assertEqual(response.status_code, 500)
+        self.assertEqual(len(self.raven.events), 1)
 
         event = self.raven.events.pop(0)
 
         assert 'request' in event
         http = event['request']
-        self.assertEquals(http['url'], 'http://localhost/an-error/')
-        self.assertEquals(http['query_string'], 'foo=bar')
-        self.assertEquals(http['method'], 'GET')
-        self.assertEquals(http['data'], {})
+        self.assertEqual(http['url'], 'http://localhost/an-error/')
+        self.assertEqual(http['query_string'], 'foo=bar')
+        self.assertEqual(http['method'], 'GET')
+        self.assertEqual(http['data'], {})
         self.assertTrue('headers' in http)
         headers = http['headers']
-        self.assertTrue('Host' in headers, headers.keys())
-        self.assertEquals(headers['Host'], 'localhost')
+        self.assertTrue('Host' in headers, list(headers.keys()))
+        self.assertEqual(headers['Host'], 'localhost')
         env = http['env']
-        self.assertTrue('SERVER_NAME' in env, env.keys())
-        self.assertEquals(env['SERVER_NAME'], 'localhost')
-        self.assertTrue('SERVER_PORT' in env, env.keys())
-        self.assertEquals(env['SERVER_PORT'], '80')
+        self.assertTrue('SERVER_NAME' in env, list(env.keys()))
+        self.assertEqual(env['SERVER_NAME'], 'localhost')
+        self.assertTrue('SERVER_PORT' in env, list(env.keys()))
+        self.assertEqual(env['SERVER_PORT'], '80')
 
     def test_post(self):
         response = self.client.post('/an-error/?biz=baz', data={'foo': 'bar'})
-        self.assertEquals(response.status_code, 500)
-        self.assertEquals(len(self.raven.events), 1)
+        self.assertEqual(response.status_code, 500)
+        self.assertEqual(len(self.raven.events), 1)
 
         event = self.raven.events.pop(0)
 
         assert 'request' in event
         http = event['request']
-        self.assertEquals(http['url'], 'http://localhost/an-error/')
-        self.assertEquals(http['query_string'], 'biz=baz')
-        self.assertEquals(http['method'], 'POST')
-        self.assertEquals(http['data'], {'foo': 'bar'})
+        self.assertEqual(http['url'], 'http://localhost/an-error/')
+        self.assertEqual(http['query_string'], 'biz=baz')
+        self.assertEqual(http['method'], 'POST')
+        self.assertEqual(http['data'], {'foo': 'bar'})
         self.assertTrue('headers' in http)
         headers = http['headers']
-        self.assertTrue('Content-Length' in headers, headers.keys())
-        self.assertEquals(headers['Content-Length'], '7')
-        self.assertTrue('Content-Type' in headers, headers.keys())
-        self.assertEquals(headers['Content-Type'], 'application/x-www-form-urlencoded')
-        self.assertTrue('Host' in headers, headers.keys())
-        self.assertEquals(headers['Host'], 'localhost')
+        self.assertTrue('Content-Length' in headers, list(headers.keys()))
+        self.assertEqual(headers['Content-Length'], '7')
+        self.assertTrue('Content-Type' in headers, list(headers.keys()))
+        self.assertEqual(headers['Content-Type'], 'application/x-www-form-urlencoded')
+        self.assertTrue('Host' in headers, list(headers.keys()))
+        self.assertEqual(headers['Host'], 'localhost')
         env = http['env']
-        self.assertTrue('SERVER_NAME' in env, env.keys())
-        self.assertEquals(env['SERVER_NAME'], 'localhost')
-        self.assertTrue('SERVER_PORT' in env, env.keys())
-        self.assertEquals(env['SERVER_PORT'], '80')
+        self.assertTrue('SERVER_NAME' in env, list(env.keys()))
+        self.assertEqual(env['SERVER_NAME'], 'localhost')
+        self.assertTrue('SERVER_PORT' in env, list(env.keys()))
+        self.assertEqual(env['SERVER_PORT'], '80')
 
     def test_captureException_captures_http(self):
         response = self.client.get('/capture/?foo=bar')
-        self.assertEquals(response.status_code, 200)
-        self.assertEquals(len(self.raven.events), 1)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(self.raven.events), 1)
 
         event = self.raven.events.pop(0)
-        self.assertEquals(event['event_id'], response.headers['X-Sentry-ID'])
+        self.assertEqual(event['event_id'], response.headers['X-Sentry-ID'])
 
         assert event['message'] == 'ValueError: Boom'
         assert 'request' in event
@@ -197,11 +197,11 @@ class FlaskTest(BaseTest):
 
     def test_captureMessage_captures_http(self):
         response = self.client.get('/message/?foo=bar')
-        self.assertEquals(response.status_code, 200)
-        self.assertEquals(len(self.raven.events), 1)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(self.raven.events), 1)
 
         event = self.raven.events.pop(0)
-        self.assertEquals(event['event_id'], response.headers['X-Sentry-ID'])
+        self.assertEqual(event['event_id'], response.headers['X-Sentry-ID'])
 
         assert 'sentry.interfaces.Message' in event
         assert 'request' in event

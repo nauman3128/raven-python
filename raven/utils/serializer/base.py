@@ -6,7 +6,7 @@ raven.utils.serializer.base
 :copyright: (c) 2010-2012 by the Sentry Team, see AUTHORS for more details.
 :license: BSD, see LICENSE for more details.
 """
-from __future__ import absolute_import
+
 
 import collections
 import itertools
@@ -81,7 +81,7 @@ class NamedtupleSerializer(Serializer):
     def serialize(self, value, **kwargs):
         list_max_length = kwargs.get('list_max_length') or float('inf')
         less_than = lambda x: x[0] < list_max_length
-        items = value._asdict().items()
+        items = list(value._asdict().items())
         takewhile = itertools.takewhile
         x = dict([
             (k, self.recurse(v, **kwargs))
@@ -195,10 +195,10 @@ class FunctionSerializer(Serializer):
 
 if PY2:
     class LongSerializer(Serializer):
-        types = (long,)  # noqa
+        types = (int,)  # noqa
 
         def serialize(self, value, **kwargs):
-            return repr(long(value))  # noqa
+            return repr(int(value))  # noqa
 
 
 # register all serializers, order matters

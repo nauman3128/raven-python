@@ -1,4 +1,4 @@
-from __future__ import absolute_import
+
 
 import mock
 import time
@@ -32,4 +32,4 @@ class GeventTransportTest(TestCase):
         time.sleep(0)
         self.assertEqual(send.call_count, 1)
         time.sleep(0)
-        self.assertEquals(done.call_count, 1)
+        self.assertEqual(done.call_count, 1)

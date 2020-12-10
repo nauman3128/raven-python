@@ -6,7 +6,7 @@ raven.base
 :license: BSD, see LICENSE for more details.
 """
 
-from __future__ import absolute_import
+
 
 import zlib
 import logging
@@ -28,7 +28,7 @@ else:
     import contextlib2 as contextlib
 
 try:
-    from thread import get_ident as get_thread_ident
+    from _thread import get_ident as get_thread_ident
 except ImportError:
     from _thread import get_ident as get_thread_ident
 
@@ -63,7 +63,7 @@ SDK_VALUE = {
 Raven = None
 
 if sys.version_info >= (3, 2):
-    basestring = str
+    str = str
 
 
 def get_excepthook_client():
@@ -829,7 +829,7 @@ class Client(object):
         exc_type = exc_info[0]
         exc_name = '%s.%s' % (exc_type.__module__, exc_type.__name__)
         exclusions = self.ignore_exceptions
-        string_exclusions = (e for e in exclusions if isinstance(e, basestring))
+        string_exclusions = (e for e in exclusions if isinstance(e, str))
         wildcard_exclusions = (e for e in string_exclusions if e.endswith('*'))
         class_exclusions = (e for e in exclusions if isclass(e))
 

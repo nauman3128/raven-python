@@ -5,7 +5,7 @@ raven.conf
 :copyright: (c) 2010-2012 by the Sentry Team, see AUTHORS for more details.
 :license: BSD, see LICENSE for more details.
 """
-from __future__ import absolute_import
+
 
 import logging
 
@@ -43,7 +43,7 @@ def setup_logging(handler, exclude=EXCLUDE_LOGGER_DEFAULTS):
     Returns a boolean based on if logging was configured or not.
     """
     logger = logging.getLogger()
-    if handler.__class__ in map(type, logger.handlers):
+    if handler.__class__ in list(map(type, logger.handlers)):
         return False
 
     logger.addHandler(handler)

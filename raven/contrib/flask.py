@@ -6,7 +6,7 @@ raven.contrib.flask
 :license: BSD, see LICENSE for more details.
 """
 
-from __future__ import absolute_import
+
 
 try:
     from flask_login import current_user

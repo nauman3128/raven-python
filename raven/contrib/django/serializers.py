@@ -5,8 +5,8 @@ raven.contrib.django.serializers
 :copyright: (c) 2010-2012 by the Sentry Team, see AUTHORS for more details.
 :license: BSD, see LICENSE for more details.
 """
-from __future__ import absolute_import
-from __future__ import unicode_literals
+
+
 
 from django.conf import settings
 from django.http import HttpRequest

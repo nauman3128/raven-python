@@ -19,8 +19,8 @@ def test_decorator_exception(lambda_env, mock_client, lambda_event, lambda_conte
 
     assert client.events
     assert isinstance(client.remote.get_transport(), HTTPTransport)
-    assert 'user' in client.events[0].keys()
-    assert 'request' in client.events[0].keys()
+    assert 'user' in list(client.events[0].keys())
+    assert 'request' in list(client.events[0].keys())
 
 
 def test_decorator_with_args(lambda_env, mock_client, lambda_event, lambda_context):

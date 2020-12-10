@@ -1,6 +1,6 @@
 """The match_hostname() function from Python 3.2, essential when using SSL."""
 
-from __future__ import absolute_import
+
 
 import re
 

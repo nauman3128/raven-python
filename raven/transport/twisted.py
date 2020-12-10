@@ -5,7 +5,7 @@ raven.transport.twisted
 :copyright: (c) 2010-2012 by the Sentry Team, see AUTHORS for more details.
 :license: BSD, see LICENSE for more details.
 """
-from __future__ import absolute_import
+
 
 
 from raven.utils.compat import BytesIO
@@ -42,7 +42,7 @@ class TwistedHTTPTransport(AsyncTransport, HTTPTransport):
         d = self._agent.request(
             b"POST", url,
             bodyProducer=FileBodyProducer(BytesIO(data)),
-            headers=Headers(dict((k, [v]) for k, v in headers.items()))
+            headers=Headers(dict((k, [v]) for k, v in list(headers.items())))
         )
 
         def on_failure(failure):

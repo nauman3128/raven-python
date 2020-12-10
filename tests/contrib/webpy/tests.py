@@ -48,37 +48,37 @@ class WebPyTest(TestCase):
     def test_get(self):
         resp = self.client.get('/test', expect_errors=True)
 
-        self.assertEquals(resp.status, 500)
-        self.assertEquals(len(self.store.events), 1)
+        self.assertEqual(resp.status, 500)
+        self.assertEqual(len(self.store.events), 1)
 
         event = self.store.events.pop()
         assert 'exception' in event
         exc = event['exception']['values'][-1]
-        self.assertEquals(exc['type'], 'ValueError')
-        self.assertEquals(exc['value'], 'That\'s what she said')
-        self.assertEquals(event['message'], 'ValueError: That\'s what she said')
+        self.assertEqual(exc['type'], 'ValueError')
+        self.assertEqual(exc['value'], 'That\'s what she said')
+        self.assertEqual(event['message'], 'ValueError: That\'s what she said')
 
     def test_post(self):
         response = self.client.post('/test?biz=baz', params={'foo': 'bar'}, expect_errors=True)
-        self.assertEquals(response.status, 500)
-        self.assertEquals(len(self.store.events), 1)
+        self.assertEqual(response.status, 500)
+        self.assertEqual(len(self.store.events), 1)
 
         event = self.store.events.pop()
 
         assert 'request' in event
         http = event['request']
-        self.assertEquals(http['url'], 'http://localhost/test')
-        self.assertEquals(http['query_string'], '?biz=baz')
-        self.assertEquals(http['method'], 'POST')
-        self.assertEquals(http['data'], 'foo=bar')
+        self.assertEqual(http['url'], 'http://localhost/test')
+        self.assertEqual(http['query_string'], '?biz=baz')
+        self.assertEqual(http['method'], 'POST')
+        self.assertEqual(http['data'], 'foo=bar')
         self.assertTrue('headers' in http)
         headers = http['headers']
-        self.assertTrue('Content-Length' in headers, headers.keys())
-        self.assertEquals(headers['Content-Length'], '7')
-        self.assertTrue('Content-Type' in headers, headers.keys())
-        self.assertEquals(headers['Content-Type'], 'application/x-www-form-urlencoded')
-        self.assertTrue('Host' in headers, headers.keys())
-        self.assertEquals(headers['Host'], 'localhost')
+        self.assertTrue('Content-Length' in headers, list(headers.keys()))
+        self.assertEqual(headers['Content-Length'], '7')
+        self.assertTrue('Content-Type' in headers, list(headers.keys()))
+        self.assertEqual(headers['Content-Type'], 'application/x-www-form-urlencoded')
+        self.assertTrue('Host' in headers, list(headers.keys()))
+        self.assertEqual(headers['Host'], 'localhost')
         env = http['env']
-        self.assertTrue('SERVER_NAME' in env, env.keys())
-        self.assertEquals(env['SERVER_NAME'], 'localhost')
+        self.assertTrue('SERVER_NAME' in env, list(env.keys()))
+        self.assertEqual(env['SERVER_NAME'], 'localhost')

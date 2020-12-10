@@ -9,7 +9,7 @@ Acts as an implicit hook for Django installs.
 """
 # flake8: noqa
 
-from __future__ import absolute_import, unicode_literals
+
 
 import logging
 import sys
@@ -93,7 +93,7 @@ class ProxyClient(object):
     __complex__ = lambda x: complex(get_client())
     __int__ = lambda x: int(get_client())
     if PY2:
-        __long__ = lambda x: long(get_client())  # NOQA
+        __long__ = lambda x: int(get_client())  # NOQA
     __float__ = lambda x: float(get_client())
     __str__ = lambda x: binary_type(get_client())
     __unicode__ = lambda x: text_type(get_client())

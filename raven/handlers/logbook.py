@@ -6,8 +6,8 @@ raven.handlers.logbook
 :license: BSD, see LICENSE for more details.
 """
 
-from __future__ import absolute_import
-from __future__ import print_function
+
+
 
 import logbook
 import sys
@@ -88,7 +88,7 @@ class SentryHandler(logbook.Handler):
         extra = {
             'lineno': record.lineno,
             'filename': record.filename,
-            'function': record.func_name,
+            'function': record.__name__,
             'process': record.process,
             'process_name': record.process_name,
         }

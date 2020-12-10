@@ -21,7 +21,7 @@ BASE_URL = '127.0.0.1:42101'
 def create_app(ignore_exceptions=None, debug=False, **config):
     import os
     app = Sanic(__name__)
-    for key, value in config.items():
+    for key, value in list(config.items()):
         app.config[key] = value
 
     app.debug = debug
@@ -79,21 +79,21 @@ class BaseTest(TestCase):
 class SanicTest(BaseTest):
     def test_does_add_to_extensions(self):
         self.assertIn('sentry', self.app.extensions)
-        self.assertEquals(self.app.extensions['sentry'], self.middleware)
+        self.assertEqual(self.app.extensions['sentry'], self.middleware)
 
     def test_error_handler(self):
         request, response = self.client.get('/an-error/')
-        self.assertEquals(response.status, 500)
-        self.assertEquals(len(self.raven.events), 1)
+        self.assertEqual(response.status, 500)
+        self.assertEqual(len(self.raven.events), 1)
 
         event = self.raven.events.pop(0)
 
         assert 'exception' in event
         exc = event['exception']['values'][-1]
-        self.assertEquals(exc['type'], 'ValueError')
-        self.assertEquals(exc['value'], 'hello world')
-        self.assertEquals(event['level'], logging.ERROR)
-        self.assertEquals(event['message'], 'ValueError: hello world')
+        self.assertEqual(exc['type'], 'ValueError')
+        self.assertEqual(exc['value'], 'hello world')
+        self.assertEqual(event['level'], logging.ERROR)
+        self.assertEqual(event['message'], 'ValueError: hello world')
 
     def test_capture_plus_logging(self):
         client, raven, app = self.make_client_and_raven(
@@ -104,70 +104,70 @@ class SanicTest(BaseTest):
 
     def test_get(self):
         request, response = self.client.get('/an-error/?foo=bar')
-        self.assertEquals(response.status, 500)
-        self.assertEquals(len(self.raven.events), 1)
+        self.assertEqual(response.status, 500)
+        self.assertEqual(len(self.raven.events), 1)
 
         event = self.raven.events.pop(0)
 
         assert 'request' in event
         http = event['request']
-        self.assertEquals(http['url'], 'http://{0}/an-error/'.format(BASE_URL))
-        self.assertEquals(http['query_string'], 'foo=bar')
-        self.assertEquals(http['method'], 'GET')
-        self.assertEquals(http['data'], {})
+        self.assertEqual(http['url'], 'http://{0}/an-error/'.format(BASE_URL))
+        self.assertEqual(http['query_string'], 'foo=bar')
+        self.assertEqual(http['method'], 'GET')
+        self.assertEqual(http['data'], {})
         self.assertTrue('headers' in http)
         headers = http['headers']
-        self.assertTrue('host' in headers, headers.keys())
+        self.assertTrue('host' in headers, list(headers.keys()))
         self.assertEqual(headers['host'], BASE_URL)
-        self.assertTrue('user-agent' in headers, headers.keys())
+        self.assertTrue('user-agent' in headers, list(headers.keys()))
         self.assertTrue('aiohttp' in headers['user-agent'])
 
     def test_post_form(self):
         request, response = self.client.post('/an-error/?biz=baz', data={'foo': 'bar'})
-        self.assertEquals(response.status, 500)
-        self.assertEquals(len(self.raven.events), 1)
+        self.assertEqual(response.status, 500)
+        self.assertEqual(len(self.raven.events), 1)
         event = self.raven.events.pop(0)
 
         assert 'request' in event
         http = event['request']
-        self.assertEquals(http['url'], 'http://{0}/an-error/'.format(BASE_URL))
-        self.assertEquals(http['query_string'], 'biz=baz')
-        self.assertEquals(http['method'], 'POST')
-        self.assertEquals(http['data'], {'foo': ['bar']})
+        self.assertEqual(http['url'], 'http://{0}/an-error/'.format(BASE_URL))
+        self.assertEqual(http['query_string'], 'biz=baz')
+        self.assertEqual(http['method'], 'POST')
+        self.assertEqual(http['data'], {'foo': ['bar']})
         self.assertTrue('headers' in http)
         headers = http['headers']
-        self.assertTrue('host' in headers, headers.keys())
+        self.assertTrue('host' in headers, list(headers.keys()))
         self.assertEqual(headers['host'], BASE_URL)
-        self.assertTrue('user-agent' in headers, headers.keys())
+        self.assertTrue('user-agent' in headers, list(headers.keys()))
         self.assertTrue('aiohttp' in headers['user-agent'])
 
     def test_post_json(self):
         request, response = self.client.post(
             '/an-error/?biz=baz', data=json.dumps({'foo': 'bar'}),
             headers={'content-type': 'application/json'})
-        self.assertEquals(response.status, 500)
-        self.assertEquals(len(self.raven.events), 1)
+        self.assertEqual(response.status, 500)
+        self.assertEqual(len(self.raven.events), 1)
         event = self.raven.events.pop(0)
         assert 'request' in event
         http = event['request']
-        self.assertEquals(http['url'], 'http://{0}/an-error/'.format(BASE_URL))
-        self.assertEquals(http['query_string'], 'biz=baz')
-        self.assertEquals(http['method'], 'POST')
-        self.assertEquals(http['data'], {'foo': 'bar'})
+        self.assertEqual(http['url'], 'http://{0}/an-error/'.format(BASE_URL))
+        self.assertEqual(http['query_string'], 'biz=baz')
+        self.assertEqual(http['method'], 'POST')
+        self.assertEqual(http['data'], {'foo': 'bar'})
         self.assertTrue('headers' in http)
         headers = http['headers']
-        self.assertTrue('host' in headers, headers.keys())
+        self.assertTrue('host' in headers, list(headers.keys()))
         self.assertEqual(headers['host'], BASE_URL)
-        self.assertTrue('user-agent' in headers, headers.keys())
+        self.assertTrue('user-agent' in headers, list(headers.keys()))
         self.assertTrue('aiohttp' in headers['user-agent'])
 
     def test_captureException_captures_http(self):
         request, response = self.client.get('/capture/?foo=bar')
-        self.assertEquals(response.status, 200)
-        self.assertEquals(len(self.raven.events), 1)
+        self.assertEqual(response.status, 200)
+        self.assertEqual(len(self.raven.events), 1)
 
         event = self.raven.events.pop(0)
-        self.assertEquals(event['event_id'], response.headers['X-Sentry-ID'])
+        self.assertEqual(event['event_id'], response.headers['X-Sentry-ID'])
 
         assert event['message'] == 'ValueError: Boom'
         print(event)
@@ -176,11 +176,11 @@ class SanicTest(BaseTest):
 
     def test_captureMessage_captures_http(self):
         request, response = self.client.get('/message/?foo=bar')
-        self.assertEquals(response.status, 200)
-        self.assertEquals(len(self.raven.events), 1)
+        self.assertEqual(response.status, 200)
+        self.assertEqual(len(self.raven.events), 1)
 
         event = self.raven.events.pop(0)
-        self.assertEquals(event['event_id'], response.headers['X-Sentry-ID'])
+        self.assertEqual(event['event_id'], response.headers['X-Sentry-ID'])
 
         assert 'sentry.interfaces.Message' in event
         assert 'request' in event

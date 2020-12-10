@@ -7,7 +7,7 @@ raven.contrib.django.client
 :license: BSD, see LICENSE for more details.
 """
 
-from __future__ import absolute_import
+
 
 import time
 import logging
@@ -75,7 +75,7 @@ def format_sql(sql, params):
             if isinstance(param, binary_type):
                 param = param.decode('utf-8', 'replace')
             if len(param) > 256:
-                param = param[:256] + u'…'
+                param = param[:256] + '…'
             rv.append("'%s'" % param.replace("'", "''"))
         else:
             rv.append(repr(param))

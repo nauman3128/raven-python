@@ -9,7 +9,7 @@ Raven wrapper for AWS Lambda handlers.
 """
 # flake8: noqa
 
-from __future__ import absolute_import
+
 
 import os
 import logging
@@ -81,7 +81,7 @@ class LambdaClient(Client):
     def build_msg(self, *args, **kwargs):
 
         data = super(LambdaClient, self).build_msg(*args, **kwargs)
-        for option, default in get_default_tags().items():
+        for option, default in list(get_default_tags().items()):
             data['tags'].setdefault(option, os.environ.get(default))
         data.setdefault('release', os.environ.get('SENTRY_RELEASE'))
         data.setdefault('environment', os.environ.get('SENTRY_ENVIRONMENT'))

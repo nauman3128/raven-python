@@ -27,7 +27,7 @@ Utilities for writing code that runs on Python 2 and 3
 # COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
 # IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-from __future__ import absolute_import
+
 
 import operator
 import sys
@@ -45,10 +45,10 @@ if PY3:
     text_type = str
     binary_type = bytes
 else:
-    string_types = basestring,
-    integer_types = (int, long)
-    class_types = (type, types.ClassType)
-    text_type = unicode
+    string_types = str,
+    integer_types = (int, int)
+    class_types = (type, type)
+    text_type = str
     binary_type = str
 
 
@@ -56,7 +56,7 @@ try:
     advance_iterator = next
 except NameError:
     def advance_iterator(it):
-        return it.next()
+        return it.__next__()
 next = advance_iterator
 
 
@@ -71,7 +71,7 @@ if PY3:
 else:
     class Iterator(object):
 
-        def next(self):
+        def __next__(self):
             return type(self).__next__(self)
 
 
@@ -116,9 +116,9 @@ else:
     # Workaround for standalone backslash
 
     def u(s):
-        return unicode(s.replace(r'\\', r'\\\\'), "unicode_escape")
-    import StringIO
-    StringIO = BytesIO = StringIO.StringIO
+        return str(s.replace(r'\\', r'\\\\'), "unicode_escape")
+    import io
+    StringIO = BytesIO = io.StringIO
 
 
 if PY3:
@@ -185,12 +185,12 @@ if PY3:
     from urllib.parse import quote as urllib_quote
     from urllib import parse as urlparse
 else:
-    from urllib2 import HTTPError
-    import httplib
-    import urllib2
-    from Queue import Queue
-    from urllib import quote as urllib_quote
-    import urlparse
+    from urllib.error import HTTPError
+    import http.client
+    import urllib.request, urllib.error, urllib.parse
+    from queue import Queue
+    from urllib.parse import quote as urllib_quote
+    import urllib.parse
 
 
 def get_code(func):

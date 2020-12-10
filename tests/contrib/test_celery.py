@@ -1,4 +1,4 @@
-from __future__ import absolute_import
+
 
 import celery
 import logging
@@ -73,7 +73,7 @@ class CeleryLoggingHandlerTestCase(TestCase):
         celery.signals.after_setup_logger.send(
             sender=None, logger=self.root,
             loglevel=logging.WARNING, logfile=None,
-            format=u'', colorize=False,
+            format='', colorize=False,
         )
 
         # Then: there is 1 new handler
@@ -108,7 +108,7 @@ class CeleryLoggingHandlerTestCase(TestCase):
         celery.signals.after_setup_logger.send(
             sender=None, logger=self.root,
             loglevel=logging.WARNING, logfile=None,
-            format=u'', colorize=False,
+            format='', colorize=False,
         )
 
         # Then: there is still just 1 handler
@@ -143,7 +143,7 @@ class CeleryLoggingHandlerTestCase(TestCase):
         celery.signals.after_setup_logger.send(
             sender=None, logger=self.root,
             loglevel=logging.WARNING, logfile=None,
-            format=u'', colorize=False,
+            format='', colorize=False,
         )
 
         # Then: there is still just 1 handler

@@ -1,4 +1,4 @@
-from __future__ import unicode_literals
+
 
 import logging
 import sys
@@ -92,7 +92,7 @@ class LoggingIntegrationTest(TestCase):
         _send_remote.side_effect = Exception()
         record = self.make_record('This is a test error')
         handler.emit(record)
-        self.assertEquals(handler.client.state.status, handler.client.state.ERROR)
+        self.assertEqual(handler.client.state.status, handler.client.state.ERROR)
 
         # Test for the case in which a send error is raised to the calling frame.
         client = Client(
@@ -170,7 +170,7 @@ class LoggingIntegrationTest(TestCase):
         event = self.client.events.pop(0)
         self.assertTrue('stacktrace' in event)
         frames = event['stacktrace']['frames']
-        self.assertNotEquals(len(frames), 1)
+        self.assertNotEqual(len(frames), 1)
         frame = frames[-1]
         self.assertEqual(frame['module'], 'raven.handlers.logging')
         assert 'exception' not in event

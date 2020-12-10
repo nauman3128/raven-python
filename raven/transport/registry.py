@@ -5,7 +5,7 @@ raven.transport.registry
 :copyright: (c) 2010-2012 by the Sentry Team, see AUTHORS for more details.
 :license: BSD, see LICENSE for more details.
 """
-from __future__ import absolute_import
+
 
 # TODO(dcramer): we really should need to import all of these by default
 from raven.transport.eventlet import EventletHTTPTransport

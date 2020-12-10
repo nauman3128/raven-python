@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
+
 
 from raven.utils.testutils import TestCase
 from raven.base import Client
@@ -56,7 +56,7 @@ class TransportTest(TestCase):
         c.send(**data)
 
         mock_cls = c._transport_cache['mock://some_username:some_password@localhost:8143/1'].get_transport()
-        print(mock_cls.__dict__)
+        print((mock_cls.__dict__))
 
         expected_message = zlib.decompress(c.encode(data))
         actual_message = zlib.decompress(mock_cls._data)

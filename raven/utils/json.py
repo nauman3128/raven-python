@@ -6,7 +6,7 @@ raven.utils.json
 :license: BSD, see LICENSE for more details.
 """
 
-from __future__ import absolute_import
+
 
 import codecs
 import collections

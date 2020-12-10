@@ -5,7 +5,7 @@ raven.contrib.django.views
 :copyright: (c) 2010-2012 by the Sentry Team, see AUTHORS for more details.
 :license: BSD, see LICENSE for more details.
 """
-from __future__ import absolute_import
+
 
 from functools import wraps
 
@@ -71,7 +71,7 @@ def extract_auth_vars(request):
         # Try to construct from GET request
         args = [
             '%s=%s' % i
-            for i in request.GET.items()
+            for i in list(request.GET.items())
             if i[0].startswith('sentry_') and i[0] != 'sentry_data'
         ]
         if args:

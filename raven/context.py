@@ -5,7 +5,7 @@ raven.context
 :copyright: (c) 2010-2012 by the Sentry Team, see AUTHORS for more details.
 :license: BSD, see LICENSE for more details.
 """
-from __future__ import absolute_import
+
 
 try:
     from collections.abc import Mapping, Iterable
@@ -18,7 +18,7 @@ from weakref import ref as weakref
 from raven.utils.compat import iteritems
 
 try:
-    from thread import get_ident as get_thread_ident
+    from _thread import get_ident as get_thread_ident
 except ImportError:
     from _thread import get_ident as get_thread_ident
 

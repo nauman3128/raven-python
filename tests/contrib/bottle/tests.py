@@ -62,17 +62,17 @@ class BottleTest(BaseTest):
     def test_error(self):
         self.assertRaises(ValueError, self.client.get, '/error/?foo=bar')
 
-        self.assertEquals(len(self.raven.events), 1)
+        self.assertEqual(len(self.raven.events), 1)
         event = self.raven.events.pop(0)
         assert 'exception' in event
 
         exc = event['exception']['values'][-1]
-        self.assertEquals(exc['type'], 'ValueError')
+        self.assertEqual(exc['type'], 'ValueError')
 
     def test_captureException_captures_http(self):
         response = self.client.get('/capture/?foo=bar')
-        self.assertEquals(response.status_code, 200)
-        self.assertEquals(len(self.raven.events), 1)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(self.raven.events), 1)
 
         event = self.raven.events.pop(0)
 
@@ -82,8 +82,8 @@ class BottleTest(BaseTest):
 
     def test_captureMessage_captures_http(self):
         response = self.client.get('/message/?foo=bar')
-        self.assertEquals(response.status_code, 200)
-        self.assertEquals(len(self.raven.events), 1)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(self.raven.events), 1)
 
         event = self.raven.events.pop(0)
 

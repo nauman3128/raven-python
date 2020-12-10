@@ -1,4 +1,4 @@
-from __future__ import absolute_import
+
 
 import os
 import logging
@@ -173,7 +173,7 @@ def _record_log_breadcrumb(logger, level, msg, *args, **kwargs):
 
 def _wrap_logging_method(meth, level=None):
     if not isinstance(meth, FunctionType):
-        func = meth.im_func
+        func = meth.__func__
     else:
         func = meth
 
@@ -355,7 +355,7 @@ def _hook_requests():
 @libraryhook('httplib')
 def _install_httplib():
     try:
-        from httplib import HTTPConnection
+        from http.client import HTTPConnection
     except ImportError:
         from http.client import HTTPConnection
 
@@ -400,7 +400,7 @@ def _install_httplib():
 
 def hook_libraries(libraries):
     if libraries is None:
-        libraries = hooked_libraries.keys()
+        libraries = list(hooked_libraries.keys())
     for lib in libraries:
         func = hooked_libraries.get(lib)
         if func is None:

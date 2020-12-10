@@ -69,8 +69,8 @@ class BreadcrumbTestCase(TestCase):
         logger.setLevel(logging.DEBUG)
         handler = logging.StreamHandler(out)
         handler.setFormatter(logging.Formatter(
-            u'%(name)s|%(filename)s|%(funcName)s|%(lineno)d|'
-            u'%(levelname)s|%(message)s'))
+            '%(name)s|%(filename)s|%(funcName)s|%(lineno)d|'
+            '%(levelname)s|%(message)s'))
         logger.addHandler(handler)
 
         client = Client('http://foo:bar@example.com/0')
