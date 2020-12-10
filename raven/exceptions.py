@@ -1,6 +1,6 @@
+from __future__ import absolute_import
 
-
-from raven.utils import six
+from raven.utils.compat import text_type
 
 
 class APIError(Exception):
@@ -9,10 +9,22 @@ class APIError(Exception):
         self.message = message
 
     def __unicode__(self):
-        return six.text_type("%s: %s" % (self.message, self.code))
+        return text_type("%s: %s" % (self.message, self.code))
 
 
 class RateLimited(APIError):
     def __init__(self, message, retry_after=0):
         self.retry_after = retry_after
         super(RateLimited, self).__init__(message, 429)
+
+
+class InvalidGitRepository(Exception):
+    pass
+
+
+class ConfigurationError(ValueError):
+    pass
+
+
+class InvalidDsn(ConfigurationError):
+    pass
