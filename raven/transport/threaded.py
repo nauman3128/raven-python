@@ -1,11 +1,10 @@
 """
 raven.transport.threaded
 ~~~~~~~~~~~~~~~~~~~~~~~~
-
 :copyright: (c) 2010-2012 by the Sentry Team, see AUTHORS for more details.
 :license: BSD, see LICENSE for more details.
 """
-
+from __future__ import absolute_import
 
 import atexit
 import logging
@@ -16,7 +15,7 @@ from time import sleep, time
 
 from raven.transport.base import AsyncTransport
 from raven.transport.http import HTTPTransport
-from raven.utils.compat import Queue
+from raven.utils.compat import Queue, check_threads
 
 DEFAULT_TIMEOUT = 10
 
@@ -27,18 +26,29 @@ class AsyncWorker(object):
     _terminator = object()
 
     def __init__(self, shutdown_timeout=DEFAULT_TIMEOUT):
+        check_threads()
         self._queue = Queue(-1)
         self._lock = threading.Lock()
         self._thread = None
+        self._thread_for_pid = None
         self.options = {
             'shutdown_timeout': shutdown_timeout,
         }
         self.start()
 
+    def is_alive(self):
+        if self._thread_for_pid != os.getpid():
+            return False
+        return self._thread and self._thread.is_alive()
+
+    def _ensure_thread(self):
+        if self.is_alive():
+            return
+        self.start()
+
     def main_thread_terminated(self):
-        self._lock.acquire()
-        try:
-            if not self._thread:
+        with self._lock:
+            if not self.is_alive():
                 # thread not started or already stopped - nothing to do
                 return
 
@@ -48,9 +58,7 @@ class AsyncWorker(object):
             timeout = self.options['shutdown_timeout']
 
             # wait briefly, initially
-            initial_timeout = 0.1
-            if timeout < initial_timeout:
-                initial_timeout = timeout
+            initial_timeout = min(0.1, timeout)
 
             if not self._timed_queue_join(initial_timeout):
                 # if that didn't work, wait a bit longer
@@ -58,9 +66,9 @@ class AsyncWorker(object):
                 # add or remove items
                 size = self._queue.qsize()
 
-                print(("Sentry is attempting to send %i pending error messages"
-                      % size))
-                print(("Waiting up to %s seconds" % timeout))
+                print("Sentry is attempting to send %i pending error messages"
+                      % size)
+                print("Waiting up to %s seconds" % timeout)
 
                 if os.name == 'nt':
                     print("Press Ctrl-Break to quit")
@@ -71,13 +79,9 @@ class AsyncWorker(object):
 
             self._thread = None
 
-        finally:
-            self._lock.release()
-
     def _timed_queue_join(self, timeout):
         """
         implementation of Queue.join which takes a 'timeout' argument
-
         returns true on success, false on timeout
         """
         deadline = time() + timeout
@@ -104,10 +108,11 @@ class AsyncWorker(object):
         """
         self._lock.acquire()
         try:
-            if not self._thread:
-                self._thread = threading.Thread(target=self._target)
+            if not self.is_alive():
+                self._thread = threading.Thread(target=self._target, name="raven.AsyncWorker")
                 self._thread.setDaemon(True)
                 self._thread.start()
+                self._thread_for_pid = os.getpid()
         finally:
             self._lock.release()
             atexit.register(self.main_thread_terminated)
@@ -116,16 +121,15 @@ class AsyncWorker(object):
         """
         Stops the task thread. Synchronous!
         """
-        self._lock.acquire()
-        try:
+        with self._lock:
             if self._thread:
                 self._queue.put_nowait(self._terminator)
                 self._thread.join(timeout=timeout)
                 self._thread = None
-        finally:
-            self._lock.release()
+                self._thread_for_pid = None
 
     def queue(self, callback, *args, **kwargs):
+        self._ensure_thread()
         self._queue.put_nowait((callback, args, kwargs))
 
     def _target(self):
@@ -150,18 +154,18 @@ class ThreadedHTTPTransport(AsyncTransport, HTTPTransport):
     scheme = ['http', 'https', 'threaded+http', 'threaded+https']
 
     def get_worker(self):
-        if not hasattr(self, '_worker'):
+        if not hasattr(self, '_worker') or not self._worker.is_alive():
             self._worker = AsyncWorker()
         return self._worker
 
-    def send_sync(self, data, headers, success_cb, failure_cb):
+    def send_sync(self, url, data, headers, success_cb, failure_cb):
         try:
-            super(ThreadedHTTPTransport, self).send(data, headers)
+            super(ThreadedHTTPTransport, self).send(url, data, headers)
         except Exception as e:
             failure_cb(e)
         else:
             success_cb()
 
-    def async_send(self, data, headers, success_cb, failure_cb):
+    def async_send(self, url, data, headers, success_cb, failure_cb):
         self.get_worker().queue(
-            self.send_sync, data, headers, success_cb, failure_cb)
+            self.send_sync, url, data, headers, success_cb, failure_cb)
