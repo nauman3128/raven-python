@@ -572,7 +572,7 @@ class Client(object):
             parsed = urlparse(url)
             transport = self._registry.get_transport(
                 parsed, **self.transport_options)
-            if transport.async:
+            if transport.is_async:
                 transport.async_send(data, headers, self._successful_send,
                                      failed_send)
             else:

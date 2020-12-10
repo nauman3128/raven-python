@@ -22,7 +22,7 @@ class Transport(object):
     compute_scope implementation.
     """
 
-    async = False
+    is_async = False
     scheme = []
 
     def check_scheme(self, url):
@@ -78,7 +78,7 @@ class AsyncTransport(Transport):
     method as describe on the base Transport class).
     """
 
-    async = True
+    is_async = True
 
     def async_send(self, data, headers, success_cb, error_cb):
         """
