@@ -209,10 +209,10 @@ class Client(object):
 
         self._random = Random(_random_seed)
 
-        if not self.is_enabled():
-            self.logger.info(
-                'Raven is not configured (logging is disabled). Please see the'
-                ' documentation for more information.')
+        # if not self.is_enabled():
+        #     self.logger.info(
+        #         'Raven is not configured (logging is disabled). Please see the'
+        #         ' documentation for more information.')
 
         if Raven is None:
             Raven = self
