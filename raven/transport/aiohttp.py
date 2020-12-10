@@ -7,7 +7,7 @@ raven.transport.aiohttp
 """
 # Skip flake8, python2 version doesn't recognize `yield from` statement
 # flake8: noqa
-from __future__ import absolute_import
+
 
 from raven.exceptions import APIError, RateLimited
 from raven.transport.base import AsyncTransport

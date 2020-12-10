@@ -8,8 +8,8 @@ Acts as an implicit hook for Django installs.
 :license: BSD, see LICENSE for more details.
 """
 
-from __future__ import absolute_import
-from __future__ import unicode_literals
+
+
 
 from hashlib import md5
 import logging
@@ -89,7 +89,7 @@ class ProxyClient(object):
     __complex__ = lambda x: complex(get_client())
     __int__ = lambda x: int(get_client())
     if not six.PY3:
-        __long__ = lambda x: long(get_client())  # NOQA
+        __long__ = lambda x: int(get_client())  # NOQA
     __float__ = lambda x: float(get_client())
     __str__ = lambda x: six.binary_type(get_client())
     __unicode__ = lambda x: six.text_type(get_client())

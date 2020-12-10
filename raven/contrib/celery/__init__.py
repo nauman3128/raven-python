@@ -14,7 +14,7 @@ raven.contrib.celery
 :copyright: (c) 2010-2012 by the Sentry Team, see AUTHORS for more details.
 :license: BSD, see LICENSE for more details.
 """
-from __future__ import absolute_import
+
 
 import logging
 from celery.signals import after_setup_logger, task_failure

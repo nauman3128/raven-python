@@ -5,7 +5,7 @@ raven.utils.http
 :copyright: (c) 2010-2012 by the Sentry Team, see AUTHORS for more details.
 :license: BSD, see LICENSE for more details.
 """
-from __future__ import absolute_import
+
 
 import socket
 import ssl
@@ -41,7 +41,7 @@ def urlopen(url, data=None, timeout=defaults.TIMEOUT, ca_certs=None,
                 match_hostname(self.sock.getpeercert(),
                                self.assert_hostname or self.host)
 
-    class ValidHTTPSHandler(urllib2.HTTPSHandler):
+    class ValidHTTPSHandler(urllib.request.HTTPSHandler):
         def https_open(self, req):
             return self.do_open(ValidHTTPSConnection, req)
 
@@ -50,7 +50,7 @@ def urlopen(url, data=None, timeout=defaults.TIMEOUT, ca_certs=None,
     else:
         handlers = []
 
-    opener = urllib2.build_opener(*handlers)
+    opener = urllib.request.build_opener(*handlers)
 
     if sys.version_info < (2, 6):
         default_timeout = socket.getdefaulttimeout()

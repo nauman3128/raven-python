@@ -1,4 +1,4 @@
-from __future__ import with_statement
+
 
 import logging
 import webob
@@ -62,27 +62,27 @@ class MiddlewareTestCase(TestCase):
         # TODO: this should be a separate test
         self.assertTrue(iterable.closed, True)
 
-        self.assertEquals(len(self.client.events), 1)
+        self.assertEqual(len(self.client.events), 1)
         event = self.client.events.pop(0)
 
         assert 'exception' in event
         exc = event['exception']['values'][0]
-        self.assertEquals(exc['type'], 'ValueError')
-        self.assertEquals(exc['value'], 'hello world')
-        self.assertEquals(event['level'], logging.ERROR)
-        self.assertEquals(event['message'], 'ValueError: hello world')
+        self.assertEqual(exc['type'], 'ValueError')
+        self.assertEqual(exc['value'], 'hello world')
+        self.assertEqual(event['level'], logging.ERROR)
+        self.assertEqual(event['message'], 'ValueError: hello world')
 
         assert 'request' in event
         http = event['request']
-        self.assertEquals(http['url'], 'http://localhost/an-error')
-        self.assertEquals(http['query_string'], 'foo=bar')
-        self.assertEquals(http['method'], 'GET')
+        self.assertEqual(http['url'], 'http://localhost/an-error')
+        self.assertEqual(http['query_string'], 'foo=bar')
+        self.assertEqual(http['method'], 'GET')
         # self.assertEquals(http['data'], {'foo': 'bar'})
         headers = http['headers']
-        self.assertTrue('Host' in headers, headers.keys())
-        self.assertEquals(headers['Host'], 'localhost:80')
+        self.assertTrue('Host' in headers, list(headers.keys()))
+        self.assertEqual(headers['Host'], 'localhost:80')
         env = http['env']
-        self.assertTrue('SERVER_NAME' in env, env.keys())
-        self.assertEquals(env['SERVER_NAME'], 'localhost')
-        self.assertTrue('SERVER_PORT' in env, env.keys())
-        self.assertEquals(env['SERVER_PORT'], '80')
+        self.assertTrue('SERVER_NAME' in env, list(env.keys()))
+        self.assertEqual(env['SERVER_NAME'], 'localhost')
+        self.assertTrue('SERVER_PORT' in env, list(env.keys()))
+        self.assertEqual(env['SERVER_PORT'], '80')

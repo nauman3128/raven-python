@@ -1,4 +1,4 @@
-from __future__ import with_statement
+
 import logging
 import mock
 from raven.conf import load, setup_logging
@@ -10,7 +10,7 @@ class LoadTest(TestCase):
         dsn = 'https://foo:bar@sentry.local/1'
         res = {}
         load(dsn, res)
-        self.assertEquals(res, {
+        self.assertEqual(res, {
             'SENTRY_PROJECT': '1',
             'SENTRY_SERVERS': ['https://sentry.local/api/1/store/'],
             'SENTRY_PUBLIC_KEY': 'foo',
@@ -22,7 +22,7 @@ class LoadTest(TestCase):
         dsn = 'https://foo:bar@sentry.local/app/1'
         res = {}
         load(dsn, res)
-        self.assertEquals(res, {
+        self.assertEqual(res, {
             'SENTRY_PROJECT': '1',
             'SENTRY_SERVERS': ['https://sentry.local/app/api/1/store/'],
             'SENTRY_PUBLIC_KEY': 'foo',
@@ -34,7 +34,7 @@ class LoadTest(TestCase):
         dsn = 'https://foo:bar@sentry.local:9000/app/1'
         res = {}
         load(dsn, res)
-        self.assertEquals(res, {
+        self.assertEqual(res, {
             'SENTRY_PROJECT': '1',
             'SENTRY_SERVERS': ['https://sentry.local:9000/app/api/1/store/'],
             'SENTRY_PUBLIC_KEY': 'foo',
@@ -45,7 +45,7 @@ class LoadTest(TestCase):
     def test_scope_is_optional(self):
         dsn = 'https://foo:bar@sentry.local/1'
         res = load(dsn)
-        self.assertEquals(res, {
+        self.assertEqual(res, {
             'SENTRY_PROJECT': '1',
             'SENTRY_SERVERS': ['https://sentry.local/api/1/store/'],
             'SENTRY_PUBLIC_KEY': 'foo',
@@ -57,7 +57,7 @@ class LoadTest(TestCase):
         dsn = 'http://foo:bar@sentry.local/app/1'
         res = {}
         load(dsn, res)
-        self.assertEquals(res, {
+        self.assertEqual(res, {
             'SENTRY_PROJECT': '1',
             'SENTRY_SERVERS': ['http://sentry.local/app/api/1/store/'],
             'SENTRY_PUBLIC_KEY': 'foo',
@@ -69,7 +69,7 @@ class LoadTest(TestCase):
         dsn = 'http://foo:bar@sentry.local:9000/app/1'
         res = {}
         load(dsn, res)
-        self.assertEquals(res, {
+        self.assertEqual(res, {
             'SENTRY_PROJECT': '1',
             'SENTRY_SERVERS': ['http://sentry.local:9000/app/api/1/store/'],
             'SENTRY_PUBLIC_KEY': 'foo',
@@ -81,7 +81,7 @@ class LoadTest(TestCase):
         dsn = 'udp://foo:bar@sentry.local:9001/1'
         res = {}
         load(dsn, res)
-        self.assertEquals(res, {
+        self.assertEqual(res, {
             'SENTRY_PROJECT': '1',
             'SENTRY_SERVERS': ['udp://sentry.local:9001/api/1/store/'],
             'SENTRY_PUBLIC_KEY': 'foo',
@@ -93,7 +93,7 @@ class LoadTest(TestCase):
         dsn = 'http://foo:bar@sentry.local:9001/1?timeout=1'
         res = {}
         load(dsn, res)
-        self.assertEquals(res, {
+        self.assertEqual(res, {
             'SENTRY_PROJECT': '1',
             'SENTRY_SERVERS': ['http://sentry.local:9001/api/1/store/'],
             'SENTRY_PUBLIC_KEY': 'foo',

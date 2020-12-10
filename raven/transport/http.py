@@ -5,7 +5,7 @@ raven.transport.http
 :copyright: (c) 2010-2012 by the Sentry Team, see AUTHORS for more details.
 :license: BSD, see LICENSE for more details.
 """
-from __future__ import absolute_import
+
 
 from raven.conf import defaults
 from raven.exceptions import APIError, RateLimited
@@ -38,7 +38,7 @@ class HTTPTransport(Transport):
         """
         Sends a request to a remote webserver using HTTP POST.
         """
-        req = urllib2.Request(self._url, headers=headers)
+        req = urllib.request.Request(self._url, headers=headers)
 
         try:
             response = urlopen(
@@ -48,7 +48,7 @@ class HTTPTransport(Transport):
                 verify_ssl=self.verify_ssl,
                 ca_certs=self.ca_certs,
             )
-        except urllib2.HTTPError as exc:
+        except urllib.error.HTTPError as exc:
             msg = exc.headers.get('x-sentry-error')
             code = exc.getcode()
             if code == 429:

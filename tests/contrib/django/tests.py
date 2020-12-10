@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-from __future__ import absolute_import
-from __future__ import with_statement
-from __future__ import unicode_literals
+
+
+
 
 import datetime
 import django
@@ -408,7 +408,7 @@ class DjangoClientTest(TestCase):
                 'raven.contrib.django.middleware.Sentry404CatchMiddleware']):
             resp = self.client.get('/non-existent-page')
             assert resp.status_code == 404
-            headers = dict(resp.items())
+            headers = dict(list(resp.items()))
             assert 'X-Sentry-ID' in headers
             assert len(self.raven.events) == 1
             event = self.raven.events.pop(0)
@@ -472,12 +472,12 @@ class DjangoClientTest(TestCase):
         assert http['data'] == '<unavailable>'
         assert 'headers' in http
         headers = http['headers']
-        assert 'Content-Type' in headers, headers.keys()
+        assert 'Content-Type' in headers, list(headers.keys())
         assert headers['Content-Type'] == 'text/html'
         env = http['env']
-        assert 'SERVER_NAME' in env, env.keys()
+        assert 'SERVER_NAME' in env, list(env.keys())
         assert env['SERVER_NAME'] == 'testserver'
-        assert 'SERVER_PORT' in env, env.keys()
+        assert 'SERVER_PORT' in env, list(env.keys())
         assert env['SERVER_PORT'] == '80'
 
     def test_marks_django_frames_correctly(self):

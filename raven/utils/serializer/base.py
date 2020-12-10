@@ -6,7 +6,7 @@ raven.utils.serializer.base
 :copyright: (c) 2010-2012 by the Sentry Team, see AUTHORS for more details.
 :license: BSD, see LICENSE for more details.
 """
-from __future__ import absolute_import
+
 
 import itertools
 import uuid
@@ -168,10 +168,10 @@ class FunctionSerializer(Serializer):
 
 if not six.PY3:
     class LongSerializer(Serializer):
-        types = (long,)  # noqa
+        types = (int,)  # noqa
 
         def serialize(self, value, **kwargs):
-            return long(value)  # noqa
+            return int(value)  # noqa
 
 
 # register all serializers, order matters

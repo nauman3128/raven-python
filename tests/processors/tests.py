@@ -74,15 +74,15 @@ class SanitizePasswordsProcessorTest(TestCase):
             VARS['foo'], "'%s'" % VARS['foo'], '"%s"' % VARS['foo'])
         )
         self.assertTrue('password' in vars)
-        self.assertEquals(vars['password'], proc.MASK)
+        self.assertEqual(vars['password'], proc.MASK)
         self.assertTrue('the_secret' in vars)
-        self.assertEquals(vars['the_secret'], proc.MASK)
+        self.assertEqual(vars['the_secret'], proc.MASK)
         self.assertTrue('a_password_here' in vars)
-        self.assertEquals(vars['a_password_here'], proc.MASK)
+        self.assertEqual(vars['a_password_here'], proc.MASK)
         self.assertTrue('api_key' in vars)
-        self.assertEquals(vars['api_key'], proc.MASK)
+        self.assertEqual(vars['api_key'], proc.MASK)
         self.assertTrue('apiKey' in vars)
-        self.assertEquals(vars['apiKey'], proc.MASK)
+        self.assertEqual(vars['apiKey'], proc.MASK)
 
     def test_stacktrace(self, *args, **kwargs):
         """
@@ -101,7 +101,7 @@ class SanitizePasswordsProcessorTest(TestCase):
         stack = values[0]['stacktrace']
         self.assertTrue('frames' in stack)
 
-        self.assertEquals(len(stack['frames']), 2)
+        self.assertEqual(len(stack['frames']), 2)
         frame = stack['frames'][1]  # frame of will_throw_type_error()
         self.assertTrue('vars' in frame)
         self._check_vars_sanitized(frame['vars'], proc)
@@ -129,7 +129,7 @@ class SanitizePasswordsProcessorTest(TestCase):
 
         self.assertTrue('request' in result)
         http = result['request']
-        self.assertEquals(
+        self.assertEqual(
             http['query_string'],
             'foo=bar&password=%(m)s&the_secret=%(m)s'
             '&a_password_here=%(m)s&api_key=%(m)s' % dict(m=proc.MASK))
@@ -143,18 +143,18 @@ class SanitizePasswordsProcessorTest(TestCase):
 
         self.assertTrue('request' in result)
         http = result['request']
-        self.assertEquals(http['query_string'], 'foo=bar&password&baz=bar' % dict(m=proc.MASK))
+        self.assertEqual(http['query_string'], 'foo=bar&password&baz=bar' % dict(m=proc.MASK))
 
     def test_sanitize_credit_card(self):
         proc = SanitizePasswordsProcessor(Mock())
         result = proc.sanitize('foo', '4242424242424242')
-        self.assertEquals(result, proc.MASK)
+        self.assertEqual(result, proc.MASK)
 
     def test_sanitize_credit_card_amex(self):
         # AMEX numbers are 15 digits, not 16
         proc = SanitizePasswordsProcessor(Mock())
         result = proc.sanitize('foo', '424242424242424')
-        self.assertEquals(result, proc.MASK)
+        self.assertEqual(result, proc.MASK)
 
 
 class RemovePostDataProcessorTest(TestCase):

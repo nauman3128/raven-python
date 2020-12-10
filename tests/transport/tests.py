@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
+
 
 from raven.utils.testutils import TestCase
 from raven.base import Client

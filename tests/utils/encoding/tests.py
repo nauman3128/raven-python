@@ -18,26 +18,26 @@ class TransformTest(TestCase):
     @pytest.mark.skipif('six.PY3')
     def test_truncating_unicode(self):
         # 'רונית מגן'
-        x = six.u('\u05e8\u05d5\u05e0\u05d9\u05ea \u05de\u05d2\u05df')
+        x = six.u('\\u05e8\\u05d5\\u05e0\\u05d9\\u05ea \\u05de\\u05d2\\u05df')
 
         result = transform(x, string_max_length=5)
-        assert result == six.u("u'\u05e8\u05d5\u05e0\u05d9\u05ea'")
+        assert result == six.u("u'\\u05e8\\u05d5\\u05e0\\u05d9\\u05ea'")
 
     @pytest.mark.skipif('not six.PY3')
     def test_unicode_in_python3(self):
         # 'רונית מגן'
-        x = six.u('\u05e8\u05d5\u05e0\u05d9\u05ea \u05de\u05d2\u05df')
+        x = six.u('\\u05e8\\u05d5\\u05e0\\u05d9\\u05ea \\u05de\\u05d2\\u05df')
 
         result = transform(x)
-        assert result == six.u("'\u05e8\u05d5\u05e0\u05d9\u05ea \u05de\u05d2\u05df'")
+        assert result == six.u("'\\u05e8\\u05d5\\u05e0\\u05d9\\u05ea \\u05de\\u05d2\\u05df'")
 
     @pytest.mark.skipif('six.PY3')
     def test_unicode_in_python2(self):
         # 'רונית מגן'
-        x = six.u('\u05e8\u05d5\u05e0\u05d9\u05ea \u05de\u05d2\u05df')
+        x = six.u('\\u05e8\\u05d5\\u05e0\\u05d9\\u05ea \\u05de\\u05d2\\u05df')
 
         result = transform(x)
-        assert result == six.u("u'\u05e8\u05d5\u05e0\u05d9\u05ea \u05de\u05d2\u05df'")
+        assert result == six.u("u'\\u05e8\\u05d5\\u05e0\\u05d9\\u05ea \\u05de\\u05d2\\u05df'")
 
     @pytest.mark.skipif('not six.PY3')
     def test_string_in_python3(self):
@@ -102,7 +102,7 @@ class TransformTest(TestCase):
 
     def test_dict_keys_utf8_as_unicode(self):
         x = {
-            six.text_type('\u05e8\u05d5\u05e0\u05d9\u05ea \u05de\u05d2\u05df'): 'bar'
+            six.text_type('\\u05e8\\u05d5\\u05e0\\u05d9\\u05ea \\u05de\\u05d2\\u05df'): 'bar'
         }
 
         result = transform(x)
@@ -110,9 +110,9 @@ class TransformTest(TestCase):
         keys = list(result.keys())
         assert len(keys) == 1
         if six.PY3:
-            expected = "'\u05e8\u05d5\u05e0\u05d9\u05ea \u05de\u05d2\u05df'"
+            expected = "'\\u05e8\\u05d5\\u05e0\\u05d9\\u05ea \\u05de\\u05d2\\u05df'"
         else:
-            expected = "u'\u05e8\u05d5\u05e0\u05d9\u05ea \u05de\u05d2\u05df'"
+            expected = "u'\\u05e8\\u05d5\\u05e0\\u05d9\\u05ea \\u05de\\u05d2\\u05df'"
         assert keys[0] == expected
 
     def test_uuid(self):
