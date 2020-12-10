@@ -1,13 +1,11 @@
 """
 This module implements WSGI related helpers adapted from ``werkzeug.wsgi``
-
 :copyright: (c) 2010 by the Werkzeug Team, see AUTHORS for more details.
 :license: BSD, see LICENSE for more details.
 """
+from __future__ import absolute_import
 
-
-from raven.utils import six
-from raven.utils.compat import urllib_quote
+from raven.utils.compat import iteritems, urllib_quote
 
 
 # `get_headers` comes from `werkzeug.datastructures.EnvironHeaders`
@@ -15,7 +13,7 @@ def get_headers(environ):
     """
     Returns only proper HTTP headers.
     """
-    for key, value in six.iteritems(environ):
+    for key, value in iteritems(environ):
         key = str(key)
         if key.startswith('HTTP_') and key not in \
            ('HTTP_CONTENT_TYPE', 'HTTP_CONTENT_LENGTH'):
@@ -37,7 +35,6 @@ def get_environ(environ):
 def get_host(environ):
     """Return the real host for the given WSGI environment.  This takes care
     of the `X-Forwarded-Host` header.
-
     :param environ: the WSGI environment to get the host of.
     """
     scheme = environ.get('wsgi.url_scheme')
@@ -62,7 +59,6 @@ def get_current_url(environ, root_only=False, strip_querystring=False,
                     host_only=False):
     """A handy helper function that recreates the full URL for the current
     request or parts of it.  Here an example:
-
     >>> from werkzeug import create_environ
     >>> env = create_environ("/?param=foo", "http://localhost/script")
     >>> get_current_url(env)
@@ -73,7 +69,6 @@ def get_current_url(environ, root_only=False, strip_querystring=False,
     'http://localhost/'
     >>> get_current_url(env, strip_querystring=True)
     'http://localhost/script/'
-
     :param environ: the WSGI environment to get the current URL from.
     :param root_only: set `True` if you only want the root URL.
     :param strip_querystring: set to `True` if you don't want the querystring.
@@ -93,3 +88,16 @@ def get_current_url(environ, root_only=False, strip_querystring=False,
             if qs:
                 cat('?' + qs)
     return ''.join(tmp)
+
+
+def get_client_ip(environ):
+    """
+    Naively yank the first IP address in an X-Forwarded-For header
+    and assume this is correct.
+    Note: Don't use this in security sensitive situations since this
+    value may be forged from a client.
+    """
+    try:
+        return environ['HTTP_X_FORWARDED_FOR'].split(',')[0].strip()
+    except (KeyError, IndexError):
+        return environ.get('REMOTE_ADDR')
